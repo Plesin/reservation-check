@@ -1,10 +1,15 @@
 import express from 'express'
 import puppeteer from 'puppeteer'
+import dotenv from 'dotenv'
 
+dotenv.config()
 const app = express()
 const PORT = process.env.PORT || 3000
-const CONFIG = {
-  url: 'https://radekpleskac.com',
+const PAGE_URL = process.env.PAGE_URL
+
+if (!PAGE_URL) {
+  console.error('Error: The PAGE_URL environment variable is not set.')
+  process.exit(1)
 }
 
 async function checkReservation() {
@@ -13,7 +18,7 @@ async function checkReservation() {
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
   })
   const page = await browser.newPage()
-  await page.goto(CONFIG.url, { waitUntil: 'networkidle2' })
+  await page.goto(PAGE_URL, { waitUntil: 'networkidle2' })
   await new Promise((resolve) => setTimeout(resolve, 10000))
   await browser.close()
 }
@@ -23,7 +28,7 @@ async function runCheck() {
 }
 
 // setInterval(runCheck, 5 * 60 * 1000) // Run every 5 minutes
-setInterval(runCheck, 30 * 1000) // Run every 30 seconds
+setInterval(runCheck, 20 * 1000) // Run every 30 seconds
 // runCheck()
 
 app.listen(PORT, () => {
