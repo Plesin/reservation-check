@@ -5,6 +5,7 @@ import dotenv from 'dotenv'
 import { hasAvailableDay } from './utils/hasAvailableDay.js'
 import { getCurrentMonth } from './utils/getCurrentMonth.js'
 import { months } from './consts.js'
+import { logger } from './utils/logger.js'
 
 dotenv.config()
 const app = express()
@@ -46,12 +47,7 @@ async function checkReservation() {
   const nextMonth = await calendarHeader.$('td:nth-child(3)')
   const currentMonth = await getCurrentMonth(calendarHeader, nextMonth)
   let currentMonthIndex = months.indexOf(currentMonth)
-  console.log(
-    'CLOG ~ currentMonth:',
-    currentMonth,
-    currentMonthIndex,
-    lastMonthIndex
-  )
+  logger(`NEW CHECK: ${currentMonth} till ${months[lastMonthIndex]}, `, true)
 
   if (lastMonthIndex < currentMonthIndex) {
     console.log(
@@ -64,7 +60,7 @@ async function checkReservation() {
   }
 
   while (currentMonthIndex < lastMonthIndex) {
-    console.log('Checking month:', months[currentMonthIndex])
+    logger(`Checking month: ${months[currentMonthIndex]}`)
     const calendar = await page.$(`${calendarSelector}`)
     const dayCells = await calendar.$$(dayCellSelector)
     const { available, availableDay } = await hasAvailableDay(
@@ -72,7 +68,7 @@ async function checkReservation() {
       dayCells
     )
     if (available) {
-      console.log('Found available day:', availableDay)
+      logger(`Found available day: ${availableDay}`)
       await browser.close()
       return
     }
@@ -90,8 +86,7 @@ async function runCheck() {
   checkReservation()
 }
 
-// setInterval(runCheck, 8 * 60 * 60 * 1000) // 8 hours
-runCheck()
+setInterval(runCheck, 1 * 60 * 1000) // 1 minute
 
 app.listen(PORT, () => {
   console.log(`Server listening on port: ${PORT}`)
