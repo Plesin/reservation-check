@@ -15,14 +15,22 @@ const calendarHeaderSelector = process.env.CALENDAR_HEADER_SELECTOR
 const dayCellSelector = process.env.DAY_CELL_SELECTOR
 const lastMonthIndex = parseInt(process.env.LAST_MONTH_INDEX ?? 11)
 
+if (lastMonthIndex < 0 || lastMonthIndex > 11) {
+  console.error(
+    `LAST_MONTH_INDEX: ${lastMonthIndex} must be between 0 (January) and 11(December)`
+  )
+  process.exit(1)
+}
+
 if (
   !pageURL ||
   !calendarSelector ||
   !calendarHeaderSelector ||
   !dayCellSelector
 ) {
-  console.error('Error: environment variables not set. Cannot continue.')
-  console.error('Please set PAGE_URL and CALENDAR_SELECTOR in your .env file.')
+  console.error(
+    'Error: environment variables not set. Check .env.example for reference'
+  )
   process.exit(1)
 }
 
@@ -56,6 +64,7 @@ async function checkReservation() {
   }
 
   while (currentMonthIndex < lastMonthIndex) {
+    console.log('Checking month:', months[currentMonthIndex])
     const calendar = await page.$(`${calendarSelector}`)
     const dayCells = await calendar.$$(dayCellSelector)
     const { available, availableDay } = await hasAvailableDay(
@@ -63,7 +72,7 @@ async function checkReservation() {
       dayCells
     )
     if (available) {
-      console.log('available day:', availableDay)
+      console.log('Found available day:', availableDay)
       await browser.close()
       return
     }
