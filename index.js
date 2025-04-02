@@ -18,6 +18,7 @@ const calendarHeaderSelector = process.env.CALENDAR_HEADER_SELECTOR
 const dayCellSelector = process.env.DAY_CELL_SELECTOR
 const lastMonthIndex = parseInt(process.env.LAST_MONTH_INDEX ?? 11)
 const cronSchedule = process.env.CRON_SCHEDULE || '0 8,12,16,20 * * *'
+const isProd = process.env.NODE_ENV === 'production'
 
 if (lastMonthIndex < 0 || lastMonthIndex > 11) {
   console.error(
@@ -40,7 +41,7 @@ if (
 
 async function checkReservation() {
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: isProd ? true : false,
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
   })
   const page = await browser.newPage()
@@ -90,13 +91,17 @@ async function checkReservation() {
   await browser.close()
 }
 
-// dev schedule
-// cron.schedule('50 11 * * *', async () => {
-//   await checkReservation()
-// })
-
-cron.schedule(cronSchedule, async () => {
+if (isProd) {
+  cron.schedule(cronSchedule, async () => {
+    await checkReservation()
+  })
+} else {
+  console.log('Running in development mode')
   await checkReservation()
+}
+
+app.get('/healthcheck', (req, res) => {
+  res.status(200).send('OK')
 })
 
 app.listen(PORT, () => {
