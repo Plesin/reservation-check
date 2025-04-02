@@ -13,6 +13,7 @@ export function logger(text, addLine = false) {
   const filePath = path.join(logsDir, `${currentDate}.log`)
 
   const content = `${addLine ? '\n' : ''}[${today}] ${text}\n`
+  console.log(`LOGGER': ${content}`)
 
   fs.appendFile(filePath, content, (err) => {
     if (err) {

@@ -17,7 +17,8 @@ const calendarSelector = process.env.CALENDAR_SELECTOR
 const calendarHeaderSelector = process.env.CALENDAR_HEADER_SELECTOR
 const dayCellSelector = process.env.DAY_CELL_SELECTOR
 const lastMonthIndex = parseInt(process.env.LAST_MONTH_INDEX ?? 11)
-const cronSchedule = process.env.CRON_SCHEDULE || '0 8,12,16,20 * * *'
+// const cronSchedule = process.env.CRON_SCHEDULE || '0 8,12,16,20 * * *'
+const cronSchedule = process.env.CRON_SCHEDULE || '0 * * * *' // testing every hour
 const isProd = process.env.NODE_ENV === 'production'
 
 if (lastMonthIndex < 0 || lastMonthIndex > 11) {
