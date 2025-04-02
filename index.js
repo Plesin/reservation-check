@@ -6,6 +6,7 @@ import { hasAvailableDay } from './utils/hasAvailableDay.js'
 import { getCurrentMonth } from './utils/getCurrentMonth.js'
 import { months } from './consts.js'
 import { logger } from './utils/logger.js'
+import { sendEmail } from './utils/sendEmail.js'
 
 dotenv.config()
 const app = express()
@@ -69,6 +70,11 @@ async function checkReservation() {
     )
     if (available) {
       logger(`Found available day: ${availableDay}`)
+      sendEmail(
+        `Available Reservation: ${availableDay}`,
+        `Found available day for your reservation at ${pageURL}: ${availableDay} in month: ${months[currentMonthIndex]}
+        The available day is: ${availableDay}`
+      )
       await browser.close()
       return
     }
@@ -86,7 +92,8 @@ async function runCheck() {
   checkReservation()
 }
 
-setInterval(runCheck, 1 * 60 * 1000) // 1 minute
+// setInterval(runCheck, 1 * 60 * 1000) // 1 minute
+runCheck()
 
 app.listen(PORT, () => {
   console.log(`Server listening on port: ${PORT}`)
