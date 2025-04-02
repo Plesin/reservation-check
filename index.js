@@ -1,6 +1,7 @@
 import express from 'express'
 import puppeteer from 'puppeteer'
 import dotenv from 'dotenv'
+import cron from 'node-cron'
 
 import { hasAvailableDay } from './utils/hasAvailableDay.js'
 import { getCurrentMonth } from './utils/getCurrentMonth.js'
@@ -16,6 +17,7 @@ const calendarSelector = process.env.CALENDAR_SELECTOR
 const calendarHeaderSelector = process.env.CALENDAR_HEADER_SELECTOR
 const dayCellSelector = process.env.DAY_CELL_SELECTOR
 const lastMonthIndex = parseInt(process.env.LAST_MONTH_INDEX ?? 11)
+const cronSchedule = process.env.CRON_SCHEDULE || '0 8,12,16,20 * * *'
 
 if (lastMonthIndex < 0 || lastMonthIndex > 11) {
   console.error(
@@ -88,11 +90,14 @@ async function checkReservation() {
   await browser.close()
 }
 
-async function runCheck() {
-  checkReservation()
-}
+// dev schedule
+// cron.schedule('50 11 * * *', async () => {
+//   await checkReservation()
+// })
 
-setInterval(runCheck, 60 * 60 * 1000) // every hour
+cron.schedule(cronSchedule, async () => {
+  await checkReservation()
+})
 
 app.listen(PORT, () => {
   console.log(`Server listening on port: ${PORT}`)
