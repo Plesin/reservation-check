@@ -92,8 +92,7 @@ async function runCheck() {
   checkReservation()
 }
 
-// setInterval(runCheck, 1 * 60 * 1000) // 1 minute
-runCheck()
+setInterval(runCheck, 60 * 60 * 1000) // every hour
 
 app.listen(PORT, () => {
   console.log(`Server listening on port: ${PORT}`)
