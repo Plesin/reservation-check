@@ -19,6 +19,7 @@ const dayCellSelector = process.env.DAY_CELL_SELECTOR
 const lastMonthIndex = parseInt(process.env.LAST_MONTH_INDEX ?? 11)
 // const cronSchedule = process.env.CRON_SCHEDULE || '0 8,12,16,20 * * *'
 const cronSchedule = process.env.CRON_SCHEDULE || '0 * * * *' // testing every hour
+console.log('CRON_SCHEDULE:', cronSchedule)
 const isProd = process.env.NODE_ENV === 'production'
 
 if (lastMonthIndex < 0 || lastMonthIndex > 11) {
@@ -94,10 +95,11 @@ async function checkReservation() {
 
 if (isProd) {
   cron.schedule(cronSchedule, async () => {
+    console.log('Cron job triggered at:', new Date().toISOString())
     await checkReservation()
   })
 } else {
-  console.log('Running in development mode')
+  console.log('Running check in development mode')
   await checkReservation()
 }
 
