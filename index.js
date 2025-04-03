@@ -17,9 +17,7 @@ const calendarSelector = process.env.CALENDAR_SELECTOR
 const calendarHeaderSelector = process.env.CALENDAR_HEADER_SELECTOR
 const dayCellSelector = process.env.DAY_CELL_SELECTOR
 const lastMonthIndex = parseInt(process.env.LAST_MONTH_INDEX ?? 11)
-// const cronSchedule = process.env.CRON_SCHEDULE || '0 8,12,16,20 * * *'
-const cronSchedule = process.env.CRON_SCHEDULE || '0 * * * *' // testing every hour
-console.log('CRON_SCHEDULE:', cronSchedule)
+const cronSchedule = process.env.CRON_SCHEDULE || '0 6-22/2 * * *' // Every 2 hours from 6am to 10pm
 const isProd = process.env.NODE_ENV === 'production'
 
 if (lastMonthIndex < 0 || lastMonthIndex > 11) {
@@ -53,14 +51,12 @@ async function checkReservation() {
     ],
   })
   const page = await browser.newPage()
-  console.log('CLOG ~ ENV:', process.env)
   await page.goto(pageURL, { waitUntil: 'networkidle2' })
   const calendar = await page.$(`${calendarSelector}`)
   const calendarHeader = await calendar.$(calendarHeaderSelector)
   const nextMonth = await calendarHeader.$('td:nth-child(3)')
   const currentMonth = await getCurrentMonth(calendarHeader, nextMonth)
   let currentMonthIndex = months.indexOf(currentMonth)
-  console.log('CLOG ~ Logger call:')
   logger(`NEW CHECK: ${currentMonth} till ${months[lastMonthIndex]}`, true)
 
   if (lastMonthIndex < currentMonthIndex) {
@@ -101,15 +97,15 @@ async function checkReservation() {
   await browser.close()
 }
 
-// if (isProd) {
-//   cron.schedule(cronSchedule, async () => {
-//     console.log('Cron job triggered at:', new Date().toISOString())
-//     await checkReservation()
-//   })
-// } else {
-console.log('Running check in development mode')
-await checkReservation()
-// }
+if (isProd) {
+  cron.schedule(cronSchedule, async () => {
+    console.log('Cron job triggered at:', new Date().toISOString())
+    await checkReservation()
+  })
+} else {
+  console.log('Running check in development mode')
+  await checkReservation()
+}
 
 app.get('/healthcheck', (req, res) => {
   res.status(200).send('OK')
