@@ -1,6 +1,18 @@
-FROM ghcr.io/puppeteer/puppeteer:24.4.0
+FROM node:22-alpine
 
-ENV PUPPETEER_SKIP_DOWNLOAD=true
+# Install Chromium and dependencies
+RUN apk add --no-cache \
+    chromium \
+    nss \
+    freetype \
+    harfbuzz \
+    ca-certificates \
+    ttf-freefont \
+    dumb-init
+
+# Pupetteer environment variables
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \    
+    PUPPETEER_DISABLE_DEV_SHM_USAGE=true
 
 # App
 WORKDIR /app
