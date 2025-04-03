@@ -47,12 +47,14 @@ async function checkReservation() {
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
   })
   const page = await browser.newPage()
+  console.log('CLOG ~ ENV:', process.env)
   await page.goto(pageURL, { waitUntil: 'networkidle2' })
   const calendar = await page.$(`${calendarSelector}`)
   const calendarHeader = await calendar.$(calendarHeaderSelector)
   const nextMonth = await calendarHeader.$('td:nth-child(3)')
   const currentMonth = await getCurrentMonth(calendarHeader, nextMonth)
   let currentMonthIndex = months.indexOf(currentMonth)
+  console.log('CLOG ~ Logger call:')
   logger(`NEW CHECK: ${currentMonth} till ${months[lastMonthIndex]}`, true)
 
   if (lastMonthIndex < currentMonthIndex) {
