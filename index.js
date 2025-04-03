@@ -43,8 +43,17 @@ if (
 
 async function checkReservation() {
   const browser = await puppeteer.launch({
-    headless: isProd ? true : false,
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    headless: isProd,
+    args: [
+      'executablePath=/usr/bin/chromium-browser',
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-gpu',
+      '--disable-extensions',
+      '--disable-software-rasterizer',
+      '--window-size=1280,800',
+    ],
   })
   const page = await browser.newPage()
   console.log('CLOG ~ ENV:', process.env)
