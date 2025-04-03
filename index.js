@@ -42,11 +42,10 @@ if (
 }
 
 async function checkReservation() {
-  console.log('CLOG ~ ENV:', process.env)
   const browser = await puppeteer.launch({
     headless: isProd,
     args: [
-      'executablePath=/usr/bin/google-chrome-stable',
+      'executablePath=/usr/bin/chromium-browser',
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-dev-shm-usage',
@@ -56,9 +55,8 @@ async function checkReservation() {
       '--window-size=1280,800',
     ],
   })
-  console.log('CLOG ~ browser:', browser)
   const page = await browser.newPage()
-  console.log('CLOG ~ page:', page)
+  console.log('CLOG ~ ENV:', process.env)
   await page.goto(pageURL, { waitUntil: 'networkidle2' })
   const calendar = await page.$(`${calendarSelector}`)
   const calendarHeader = await calendar.$(calendarHeaderSelector)
