@@ -45,13 +45,10 @@ async function checkReservation() {
   const browser = await puppeteer.launch({
     headless: isProd,
     args: [
-      'executablePath=/usr/bin/chromium-browser',
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      '--disable-gpu',
-      '--disable-extensions',
-      '--disable-software-rasterizer',
+      `--no-sandbox`,
+      `--headless`,
+      `--disable-gpu`,
+      `--disable-dev-shm-usage`,
       '--window-size=1280,800',
     ],
   })
@@ -104,15 +101,15 @@ async function checkReservation() {
   await browser.close()
 }
 
-if (isProd) {
-  cron.schedule(cronSchedule, async () => {
-    console.log('Cron job triggered at:', new Date().toISOString())
-    await checkReservation()
-  })
-} else {
-  console.log('Running check in development mode')
-  await checkReservation()
-}
+// if (isProd) {
+//   cron.schedule(cronSchedule, async () => {
+//     console.log('Cron job triggered at:', new Date().toISOString())
+//     await checkReservation()
+//   })
+// } else {
+console.log('Running check in development mode')
+await checkReservation()
+// }
 
 app.get('/healthcheck', (req, res) => {
   res.status(200).send('OK')

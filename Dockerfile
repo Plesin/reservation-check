@@ -1,18 +1,9 @@
-FROM node:22-alpine
+FROM node:20
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-khmeros \
+    fonts-kacst fonts-freefont-ttf dbus dbus-x11
 
-# Install Chromium and dependencies
-RUN apk add --no-cache \
-    chromium \
-    nss \
-    freetype \
-    harfbuzz \
-    ca-certificates \
-    ttf-freefont \
-    dumb-init
-
-# Pupetteer environment variables
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \    
-    PUPPETEER_DISABLE_DEV_SHM_USAGE=true
+RUN npx puppeteer browsers install chrome --install-deps
 
 # App
 WORKDIR /app
