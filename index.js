@@ -106,15 +106,15 @@ async function checkReservation() {
   await browser.close()
 }
 
-// if (isProd) {
-//   cron.schedule(cronSchedule, async () => {
-//     console.log('Cron job triggered at:', new Date().toISOString())
-//     await checkReservation()
-//   })
-// } else {
-console.log('Running check in development mode')
-await checkReservation()
-// }
+if (isProd) {
+  cron.schedule(cronSchedule, async () => {
+    console.log('Cron job triggered at:', new Date().toISOString())
+    await checkReservation()
+  })
+} else {
+  console.log('Running check in development mode')
+  await checkReservation()
+}
 
 app.get('/healthcheck', (req, res) => {
   res.status(200).send('OK')
