@@ -13,11 +13,11 @@ export function logger(text, addLine = false) {
   const filePath = path.join(logsDir, `${currentDate}.log`)
 
   const content = `${addLine ? '\n' : ''}[${today}] ${text}\n`
-  console.log(`LOGGER': ${content}`)
+  console.log(content)
 
-  fs.appendFile(filePath, content, (err) => {
-    if (err) {
-      console.error('Failed to write to log file:', err)
-    }
-  })
+  try {
+    fs.appendFileSync(filePath, content, 'utf8')
+  } catch (err) {
+    console.error('Failed to write log:', err.message)
+  }
 }

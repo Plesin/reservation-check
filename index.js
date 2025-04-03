@@ -53,7 +53,7 @@ async function checkReservation() {
   const nextMonth = await calendarHeader.$('td:nth-child(3)')
   const currentMonth = await getCurrentMonth(calendarHeader, nextMonth)
   let currentMonthIndex = months.indexOf(currentMonth)
-  logger(`NEW CHECK: ${currentMonth} till ${months[lastMonthIndex]}, `, true)
+  logger(`NEW CHECK: ${currentMonth} till ${months[lastMonthIndex]}`, true)
 
   if (lastMonthIndex < currentMonthIndex) {
     console.log(
