@@ -1,3 +1,4 @@
+import fs from 'fs'
 import express from 'express'
 import puppeteer from 'puppeteer'
 import dotenv from 'dotenv'
@@ -9,6 +10,7 @@ import { getCurrentMonth } from './utils/getCurrentMonth.js'
 import { months } from './consts.js'
 import { logger } from './utils/logger.js'
 import { sendEmail } from './utils/sendEmail.js'
+import { takeScreenshot, screenshotsDir } from './utils/screenshots.js'
 
 dotenv.config()
 const app = express()
@@ -61,6 +63,8 @@ async function checkReservation() {
       calendar,
       dayCells
     )
+    await takeScreenshot(page, currentMonthIndex, calendarSelector)
+
     if (available) {
       logger(`Found available day: ${availableDay}`)
       sendEmail(
@@ -81,6 +85,36 @@ async function checkReservation() {
   await browser.close()
 }
 
+app.get('/healthcheck', (req, res) => {
+  res.status(200).send('OK')
+})
+
+app.get('/screenshots', (req, res) => {
+  fs.readdir(screenshotsDir, (err, files) => {
+    if (err) {
+      res.status(500).send('Error reading screenshots directory')
+      return
+    }
+    const screenshots = files
+      .map(
+        (file) =>
+          `<img src="/screenshots/${file}" style="max-width: 100%; margin-bottom: 10px;">`
+      )
+      .join('<br>')
+    res.send(`<html><body>${screenshots}</body></html>`)
+  })
+})
+
+app.use('/screenshots', express.static(screenshotsDir))
+
+app.listen(PORT, (err) => {
+  if (err) {
+    console.error(`Failed to start server: ${err.message}`)
+    process.exit(1)
+  }
+  console.log(`Server listening on port: ${PORT}`)
+})
+
 if (isProd) {
   cron.schedule(cronSchedule, async () => {
     console.log('Cron job triggered at:', new Date().toISOString())
@@ -90,11 +124,3 @@ if (isProd) {
   console.log('Running check in development mode')
   await checkReservation()
 }
-
-app.get('/healthcheck', (req, res) => {
-  res.status(200).send('OK')
-})
-
-app.listen(PORT, () => {
-  console.log(`Server listening on port: ${PORT}`)
-})
