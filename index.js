@@ -3,6 +3,7 @@ import puppeteer from 'puppeteer'
 import dotenv from 'dotenv'
 import cron from 'node-cron'
 
+import { getEnvVariables } from './utils/getEnvVariables.js'
 import { hasAvailableDay } from './utils/hasAvailableDay.js'
 import { getCurrentMonth } from './utils/getCurrentMonth.js'
 import { months } from './consts.js'
@@ -12,32 +13,15 @@ import { sendEmail } from './utils/sendEmail.js'
 dotenv.config()
 const app = express()
 const PORT = process.env.PORT || 3000
-const pageURL = process.env.PAGE_URL
-const calendarSelector = process.env.CALENDAR_SELECTOR
-const calendarHeaderSelector = process.env.CALENDAR_HEADER_SELECTOR
-const dayCellSelector = process.env.DAY_CELL_SELECTOR
-const lastMonthIndex = parseInt(process.env.LAST_MONTH_INDEX ?? 11)
 const cronSchedule = process.env.CRON_SCHEDULE || '0 6-22/2 * * *' // Every 2 hours from 6am to 10pm
-const isProd = process.env.NODE_ENV === 'production'
-
-if (lastMonthIndex < 0 || lastMonthIndex > 11) {
-  console.error(
-    `LAST_MONTH_INDEX: ${lastMonthIndex} must be between 0 (January) and 11(December)`
-  )
-  process.exit(1)
-}
-
-if (
-  !pageURL ||
-  !calendarSelector ||
-  !calendarHeaderSelector ||
-  !dayCellSelector
-) {
-  console.error(
-    'Error: environment variables not set. Check .env.example for reference'
-  )
-  process.exit(1)
-}
+const {
+  lastMonthIndex,
+  pageURL,
+  calendarSelector,
+  calendarHeaderSelector,
+  dayCellSelector,
+  isProd,
+} = getEnvVariables()
 
 async function checkReservation() {
   const browser = await puppeteer.launch({
