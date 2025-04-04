@@ -9,7 +9,6 @@ if (!fs.existsSync(logsDir)) {
 }
 
 export function logger(text, addLine = false) {
-  console.log('logger called with text:', text)
   const today = new Date().toISOString()
   const currentDate = today.split('T')[0] // Format: YYYY-MM-DD
   const filePath = path.join(logsDir, `${currentDate}.log`)
