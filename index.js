@@ -63,7 +63,7 @@ async function checkReservation() {
       calendar,
       dayCells
     )
-    await takeScreenshot(page, currentMonthIndex, calendarSelector)
+    await takeScreenshot(page, currentMonthIndex, calendar)
 
     if (available) {
       logger(`Found available day: ${availableDay}`)
@@ -95,13 +95,17 @@ app.get('/screenshots', (req, res) => {
       res.status(500).send('Error reading screenshots directory')
       return
     }
-    const screenshots = files
-      .map(
-        (file) =>
-          `<img src="/screenshots/${file}" style="max-width: 100%; margin-bottom: 10px;">`
-      )
-      .join('<br>')
-    res.send(`<html><body>${screenshots}</body></html>`)
+    res.send(
+      `<html><body><main style="max-width: 100vw;">${files
+        .map(
+          (file) =>
+            `<div style="display: inline-flex; flex-direction: column; text-align: center; margin: 10px;">
+              <span>${file}</span>
+              <img src="/screenshots/${file}" >
+            </div>`
+        )
+        .join('')}</main></body></html>`
+    )
   })
 })
 
