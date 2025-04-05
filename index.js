@@ -9,6 +9,7 @@ import { hasAvailableDay } from './utils/hasAvailableDay.js'
 import { getCurrentMonth } from './utils/getCurrentMonth.js'
 import { months } from './consts.js'
 import { logger } from './utils/logger.js'
+import './utils/healthcheck.js'
 import { sendEmail } from './utils/sendEmail.js'
 import { takeScreenshot, screenshotsDir } from './utils/screenshots.js'
 
