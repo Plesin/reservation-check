@@ -15,9 +15,9 @@ export async function sendEmail(subject, message) {
   }
   try {
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
       host: 'smtp.gmail.com',
-      port: 465,
+      port: 587, // 465 for SSL does not work on my VPS, using STARTTLS
+      secure: false,
       secure: true,
       auth: {
         user: process.env.EMAIL_USER,
