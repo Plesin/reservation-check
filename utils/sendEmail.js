@@ -18,7 +18,6 @@ export async function sendEmail(subject, message) {
       host: 'smtp.gmail.com',
       port: 587, // 465 for SSL does not work on my VPS, using STARTTLS
       secure: false,
-      secure: true,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_APP_PASSWORD,
