@@ -9,7 +9,7 @@ Having the first available reservation months from now. So your only choice is t
 
 ## The solution
 
-This app uses an [express.js](https://expressjs.com/) server, [puppeteer](https://pptr.dev/) and [nodemailer](https://www.nodemailer.com/) to periodically check the reservation calender for available slots, possibly canceled reservations. The check is via a cron jog and can be customized by `CRON_SCHEDULE` env var. Default check is `'0 6-22/2 \* \* \*'` `// Every 2 hours from 6am to 10pm UTC`.
+This app uses an [express.js](https://expressjs.com/) server, [puppeteer](https://pptr.dev/) and [nodemailer](https://www.nodemailer.com/) to periodically check the reservation calendar for available slots, possibly canceled reservations. The check is via a cron job and can be customized by `CRON_SCHEDULE` env var. Default check is `'0 6-22/2 \* \* \*'` `// Every 2 hours from 6am to 10pm UTC`.
 If a free slot is found in the reservation calendar an email notification is sent about the specific date. So you can possibly rebook your reservation for an earlier date. A calendar screenshot is created for each check and stored in `data/screenshots` directory.
 
 ## Note
